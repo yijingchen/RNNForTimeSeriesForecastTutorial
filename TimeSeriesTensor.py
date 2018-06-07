@@ -12,8 +12,10 @@ class TimeSeriesTensor(UserDict):
     # The class takes the following parameters:
     #    - **dataset**: original time series
     #    - **H**: the forecast horizon
-    #    - **tensor_structures**: a dictionary discribing the tensor structure with
-    #      the form { 'tensor_name' : (range(max_backward_shift, max_forward_shift), [feature, feature, ...] ) }
+    #    - **tensor_structures**: a dictionary discribing the tensor structure of the form
+    #          { 'tensor_name' : (range(max_backward_shift, max_forward_shift), [feature, feature, ...] ) }
+    #          if features are non-sequential and should not be shifted, use the form
+    #          { 'tensor_name' : (None, [feature, feature, ...])}
     #    - **freq**: time series frequency
     #    - **drop_incomplete**: (Boolean) whether to drop incomplete samples
     
@@ -23,8 +25,8 @@ class TimeSeriesTensor(UserDict):
         self.tensor_structure = tensor_structure
         self.tensor_names = list(tensor_structure.keys())
         
-        self.shifted_df = self.shift_data(H, freq, drop_incomplete)
-        self.data = self.df2tensors(self.shifted_df)
+        self.dataframe = self.shift_data(H, freq, drop_incomplete)
+        self.data = self.df2tensors(self.dataframe)
     
     
     def shift_data(self, H, freq, drop_incomplete):
@@ -41,14 +43,20 @@ class TimeSeriesTensor(UserDict):
             dataset_cols = structure[1]
             
             for col in dataset_cols:
-                    
-                for t in rng:
-                    sign = '+' if t > 0 else ''
-                    shift = str(t) if t != 0 else ''
-                    period = 't'+sign+shift
-                    shifted_col = name+'_'+col+'_'+period
-                    df[shifted_col] = df[col].shift(t*-1, freq=freq)
-                    idx_tuples.append((name, col, period))
+            
+            # do not shift non-sequential 'static' features
+                if rng is None:
+                    df['context_'+col] = df[col]
+                    idx_tuples.append((name, col, 'static'))
+
+                else:
+                    for t in rng:
+                        sign = '+' if t > 0 else ''
+                        shift = str(t) if t != 0 else ''
+                        period = 't'+sign+shift
+                        shifted_col = name+'_'+col+'_'+period
+                        df[shifted_col] = df[col].shift(t*-1, freq=freq)
+                        idx_tuples.append((name, col, period))
                 
         df = df.drop(self.dataset.columns, axis=1)
         idx = pd.MultiIndex.from_tuples(idx_tuples, names=['tensor', 'feature', 'time step'])
@@ -60,24 +68,27 @@ class TimeSeriesTensor(UserDict):
         return df
     
     
-    def df2tensors(self, shifted_df):
+    def df2tensors(self, dataframe):
     
         inputs = {}
-        y = shifted_df['target']
+        y = dataframe['target']
         y = y.as_matrix()
         inputs['target'] = y
 
         for name, structure in self.tensor_structure.items():
             rng = structure[0]
             cols = structure[1]
-            tensor = shifted_df[name][cols].as_matrix()
-            tensor = tensor.reshape(tensor.shape[0], len(cols), len(rng))
-            tensor = np.transpose(tensor, axes=[0, 2, 1])
+            tensor = dataframe[name][cols].as_matrix()
+            if rng is None:
+                tensor = tensor.reshape(tensor.shape[0], len(cols))
+            else:
+                tensor = tensor.reshape(tensor.shape[0], len(cols), len(rng))
+                tensor = np.transpose(tensor, axes=[0, 2, 1])
             inputs[name] = tensor
 
         return inputs
     
-    def subset_data(self, new_shifted_df):
+    def subset_data(self, new_dataframe):
         
-        self.shifted_df = new_shifted_df
-        self.data = self.df2tensors(self.shifted_df)
+        self.dataframe = new_dataframe
+        self.data = self.df2tensors(self.dataframe)
