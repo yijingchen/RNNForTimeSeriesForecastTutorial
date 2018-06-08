@@ -1,3 +1,7 @@
+# This script unzips the GEFCom2014 data zip file and extracts the 'extended'
+# load forecasting competition data. Data is saved in energy.csv
+
+
 import zipfile
 import os
 import sys
@@ -33,5 +37,3 @@ data = data[data.timestamp >= '2012-01-01']
 
 # save to csv
 data.to_csv(os.path.join(data_dir, 'energy.csv'), index=False)
-
-
