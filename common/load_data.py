@@ -1,5 +1,7 @@
 def load_data():
 
+    # read GEFCom2014 load data
+
     data_dir = 'data/'
 
     energy = pd.read_csv(os.path.join(data_dir, 'energy.csv'), parse_dates=['timestamp'])
@@ -10,8 +12,8 @@ def load_data():
 
     energy.index = energy['timestamp']
     energy = energy.reindex(pd.date_range(min(energy['timestamp']),
-                                            max(energy['timestamp']),
-                                            freq='H'))
+                                          max(energy['timestamp']),
+                                          freq='H'))
     energy = energy.drop('timestamp', axis=1)
 
     return energy

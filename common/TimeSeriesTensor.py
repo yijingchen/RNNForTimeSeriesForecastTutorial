@@ -25,12 +25,18 @@ class TimeSeriesTensor(UserDict):
         self.tensor_structure = tensor_structure
         self.tensor_names = list(tensor_structure.keys())
         
-        self.dataframe = self.shift_data(H, freq, drop_incomplete)
-        self.data = self.df2tensors(self.dataframe)
+        self.dataframe = self._shift_data(H, freq, drop_incomplete)
+        self.data = self._df2tensors(self.dataframe)
     
     
-    def shift_data(self, H, freq, drop_incomplete):
+    def _shift_data(self, H, freq, drop_incomplete):
         
+        # Use the tensor_structures definitions to shift the features in the original dataset.
+        # The result is a Pandas dataframe with multi-index columns in the hierarchy
+        #     tensor - the name of the input tensor
+        #     feature - the input feature to be shifted
+        #     time step - the time step for the RNN in which the data is input. These labels
+        #         are centred on time t. the forecast creation time
         df = self.dataset.copy()
         
         idx_tuples = []
@@ -68,7 +74,12 @@ class TimeSeriesTensor(UserDict):
         return df
     
     
-    def df2tensors(self, dataframe):
+    def _df2tensors(self, dataframe):
+        
+        # Transform the shifted Pandas dataframe into the multidimensional numpy arrays. These
+        # arrays can be used to input into the keras model and can be accessed by tensor name.
+        # For example, for a TimeSeriesTensor object named "model_inputs" and a tensor named
+        # "target", the input tensor can be acccessed with model_inputs['target']
     
         inputs = {}
         y = dataframe['target']
@@ -88,7 +99,11 @@ class TimeSeriesTensor(UserDict):
 
         return inputs
     
+    
     def subset_data(self, new_dataframe):
         
+        # Use this function to recreate the input tensors if the shifted dataframe
+        # has been filtered.
+        
         self.dataframe = new_dataframe
-        self.data = self.df2tensors(self.dataframe)
+        self.data = self._df2tensors(self.dataframe)
