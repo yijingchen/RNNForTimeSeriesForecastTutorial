@@ -1,23 +1,62 @@
-class TimeSeriesTensor(UserDict):
-    
-    # A dictionary of tensors for input into the RNN model
-    
-    # Use this class to:
-    #   1. Shift the values of the time series to create a Pandas dataframe containing all the data
-    #      for a single training example
-    #   2. Discard any samples with missing values
-    #   3. Transform this Pandas dataframe into a numpy array of shape 
-    #      (samples, time steps, features) for input into Keras
+import numpy as np
+import pandas as pd
+import os
+from collections import UserDict
 
-    # The class takes the following parameters:
-    #    - **dataset**: original time series
-    #    - **H**: the forecast horizon
-    #    - **tensor_structures**: a dictionary discribing the tensor structure of the form
-    #          { 'tensor_name' : (range(max_backward_shift, max_forward_shift), [feature, feature, ...] ) }
-    #          if features are non-sequential and should not be shifted, use the form
-    #          { 'tensor_name' : (None, [feature, feature, ...])}
-    #    - **freq**: time series frequency
-    #    - **drop_incomplete**: (Boolean) whether to drop incomplete samples
+def load_data():
+    """Load the GEFCom 2014 energy load data"""
+
+    data_dir = 'data/'
+    energy = pd.read_csv(os.path.join(data_dir, 'energy.csv'), parse_dates=['timestamp'])
+
+    # Reindex the dataframe such that the dataframe has a record for every time point
+    # between the minimum and maximum timestamp in the time series. This helps to 
+    # identify missing time periods in the data (there are none in this dataset).
+
+    energy.index = energy['timestamp']
+    energy = energy.reindex(pd.date_range(min(energy['timestamp']),
+                                          max(energy['timestamp']),
+                                          freq='H'))
+    energy = energy.drop('timestamp', axis=1)
+
+    return energy
+
+
+def mape(predictions, actuals):
+    """Mean absolute percentage error"""
+    return ((predictions - actuals).abs() / actuals).mean()
+
+
+def create_evaluation_df(predictions, test_inputs, H, scaler):
+    """Create a data frame for easy evaluation"""
+    eval_df = pd.DataFrame(predictions, columns=['t+'+str(t) for t in range(1, H+1)])
+    eval_df['timestamp'] = test_inputs.dataframe.index
+    eval_df = pd.melt(eval_df, id_vars='timestamp', value_name='prediction', var_name='h')
+    eval_df['actual'] = np.transpose(test_inputs['target']).ravel()
+    eval_df[['prediction', 'actual']] = scaler.inverse_transform(eval_df[['prediction', 'actual']])
+    return eval_df
+
+
+class TimeSeriesTensor(UserDict):
+    """A dictionary of tensors for input into the RNN model.
+    
+    Use this class to:
+      1. Shift the values of the time series to create a Pandas dataframe containing all the data
+         for a single training example
+      2. Discard any samples with missing values
+      3. Transform this Pandas dataframe into a numpy array of shape 
+         (samples, time steps, features) for input into Keras
+
+    The class takes the following parameters:
+       - **dataset**: original time series
+       - **H**: the forecast horizon
+       - **tensor_structures**: a dictionary discribing the tensor structure of the form
+             { 'tensor_name' : (range(max_backward_shift, max_forward_shift), [feature, feature, ...] ) }
+             if features are non-sequential and should not be shifted, use the form
+             { 'tensor_name' : (None, [feature, feature, ...])}
+       - **freq**: time series frequency
+       - **drop_incomplete**: (Boolean) whether to drop incomplete samples
+    """
     
     def __init__(self, dataset, target, H, tensor_structure, freq='H', drop_incomplete=True):
         self.dataset = dataset
@@ -27,7 +66,6 @@ class TimeSeriesTensor(UserDict):
         
         self.dataframe = self._shift_data(H, freq, drop_incomplete)
         self.data = self._df2tensors(self.dataframe)
-    
     
     def _shift_data(self, H, freq, drop_incomplete):
         
@@ -73,7 +111,6 @@ class TimeSeriesTensor(UserDict):
 
         return df
     
-    
     def _df2tensors(self, dataframe):
         
         # Transform the shifted Pandas dataframe into the multidimensional numpy arrays. These
@@ -98,8 +135,7 @@ class TimeSeriesTensor(UserDict):
             inputs[name] = tensor
 
         return inputs
-    
-    
+       
     def subset_data(self, new_dataframe):
         
         # Use this function to recreate the input tensors if the shifted dataframe
