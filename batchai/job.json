@@ -1,0 +1,37 @@
+{
+    "$schema": "https://raw.githubusercontent.com/Azure/BatchAI/master/schemas/2018-05-01/job.json",
+    "properties": {
+      "nodeCount": 1,
+      "customToolkitSettings": {
+        "commandLine": "python $AZ_BATCHAI_JOB_MOUNT_ROOT/resources/scripts/tune_multi_step_vector_output.py --datadir $AZ_BATCHAI_JOB_MOUNT_ROOT/resources/data --outputdir $AZ_BATCHAI_OUTPUT_ALL --T 72 --LATENT_DIM_1 64"
+      },
+      "stdOutErrPathPrefix": "$AZ_BATCHAI_JOB_MOUNT_ROOT/logs",
+      "outputDirectories": [
+        {
+          "pathPrefix": "$AZ_BATCHAI_JOB_MOUNT_ROOT/output",
+          "id": "ALL"
+        }
+      ],
+      "mountVolumes": {
+        "azureFileShares": [
+          {
+            "azureFileUrl": "https://rnnbaisa.file.core.windows.net/logs",
+            "relativeMountPath": "logs"
+          },
+          {
+            "azureFileUrl": "https://rnnbaisa.file.core.windows.net/resources",
+            "relativeMountPath": "resources"
+          },
+          {
+            "azureFileUrl": "https://rnnbaisa.file.core.windows.net/output",
+            "relativeMountPath": "output"
+          }
+        ]
+      },
+      "containerSettings": {
+        "imageSourceRegistry": {
+          "image": "angusrtaylor/rnntutorial"
+        }
+      }
+    }
+  }

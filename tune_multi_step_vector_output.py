@@ -7,6 +7,7 @@ from glob import glob
 
 import argparse
 parser = argparse.ArgumentParser()
+parser.add_argument("--data_dir", type=str)
 parser.add_argument("--T", type=int)
 parser.add_argument("--LATENT_DIM_1", type=int)
 parser.add_argument("-LATENT_DIM_2", type=int)
@@ -19,7 +20,7 @@ from common.utils import load_data, mape, TimeSeriesTensor, create_evaluation_df
 
 # Load data into Pandas dataframe
 
-energy = load_data()
+energy = load_data(args.data_dir)
 energy.head()
 
 valid_start_dt = '2014-09-01 00:00:00'
