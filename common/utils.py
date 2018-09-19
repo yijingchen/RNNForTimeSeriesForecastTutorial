@@ -3,10 +3,9 @@ import pandas as pd
 import os
 from collections import UserDict
 
-def load_data():
+def load_data(data_dir):
     """Load the GEFCom 2014 energy load data"""
 
-    data_dir = 'data/'
     energy = pd.read_csv(os.path.join(data_dir, 'energy.csv'), parse_dates=['timestamp'])
 
     # Reindex the dataframe such that the dataframe has a record for every time point
