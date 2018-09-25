@@ -1,45 +1,33 @@
 # Environment Setup
 
-## Log into Azure account
+This code uses Azure service to run training process remotely. To get a free Azure account, please follow instructions [here](https://azure.microsoft.com/en-us/free/).
+We use Azure CLI to set up the environment. To install the latest version of Azure CLI, please follow instructions [here](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest).
 
-TBD
-
-## Download and Extract dataset
-
-TBD
-
-## Create Batch AI resources
-
-Run the following commands in bash shell:
-
+* Log into Azure account by running in Bash shell:
 ```bash
-BATCHAI_SA=<storage-account-name>
-BATCHAI_RG=<resource-group-name>
-BATCHAI_WS=<batch-ai-workspace-name>
-BATCHAI_CLUST=<batch-ai-cluster-name>
-BATCHAI_EXP=<batch-ai-experiment-name>
-
-az group create -l southcentralus -n ${BATCHAI_RG}
-az batchai workspace create -l southcentralus -g ${BATCHAI_RG} -n ${BATCHAI_WS}
-
-az storage account create -n ${BATCHAI_SA} --sku Standard_LRS -g ${BATCHAI_RG}
-
-az storage share create -n logs --account-name ${BATCHAIR_RG}
-az storage share create -n resources --account-name ${BATCHAIR_SA}
-az storage share create -n output --account-name ${BATCHAIR_SA}
-az storage directory create -n scripts -s resources --account-name ${BATCHAIR_SA}
-az storage directory create -n data -s resources --account-name ${BATCHAIR_SA}
-az storage file upload -s resources --source energy.csv --path data --account-name ${BATCHAIR_SA}
-
-az batchai cluster create -g ${BATCHAI_RG} -w ${BATCHAI_WS} -n ${BATCHAI_CLUST} --user <username> --password <password> --image UbuntuLTS --vm-size Standard_NC6 --max 10 --min 1 --storage-account-name ${BATCHAI_SA}
+az login
 ```
-
-## Create service principal
-
-TBD
-
-## Create configuration file
-
-TBD
-
+and following instructions there. If your account is linked to multiple subscriptions, find the id of the subscription you want to use by running
+```bash
+az account list --all -o table
+```
+and set this subscription as active by running
+```bash
+az account set -s <subscription-id>
+```
+If your Azure account is linked to a single subcription, get your subscription id by running
+```bash
+az account show | grep "id"
+```
+* Download the dataset
+```bash
+wget https://www.dropbox.com/s/pqenrr2mcvl0hk9/GEFCom2014.zip
+```
+* Create Batch AI resources by running
+```bash
+./setup_batchai -s <subscription_id> -r <azure-region> -g <resource-group>
+```
+where 
+    - <resource-group> is the name of Azure resource group where all resources will be created. If the resource group does not exist then it will be created by the script.
+    - <azure-region> is Azure region where all resources will be created, one of "eastus", "eastus2", "southcentralus", "westcentralus", "westus2".
 

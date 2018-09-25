@@ -1,7 +1,9 @@
 # multi-step forecasting with multivariate input using feed-forward neural network
 # the hyperparameters of feed-forward neural network are tuned using Batch AI
-# to use this code, please copy configuration.json.template to configuration.json and
-# fill all credentials and configuration parameters in configuration.json file
+# to use this code:
+#     1. follow instructions in setup.md and provision Batch AI environment
+#     2. copy configuration.json.template to configuration.json
+#     3. fill all credentials and configuration parameters in configuration.json file
 #########################################################################################################
 
 import sys
@@ -24,6 +26,7 @@ from utilities.job_factory import ParameterSweep, NumericParameter, DiscretePara
 # connect to Batch AI workspace and cluster
 creds = ServicePrincipalCredentials(client_id=cfg['active_directory']['client_id'], secret=cfg['active_directory']['client_secret'], 
                                     tenant=cfg['active_directory']['tenant_id'])
+
 batchai_client = batchai.BatchAIManagementClient(credentials=creds, subscription_id=cfg['subscription_id'])
 cluster = batchai_client.clusters.get(cfg['resource_group'], cfg['batch_ai']['workspace'], cfg['batch_ai']['cluster_name'])
 
@@ -31,27 +34,27 @@ cluster = batchai_client.clusters.get(cfg['resource_group'], cfg['batch_ai']['wo
 param_specs = [
     DiscreteParameter(
         parameter_name="LATENT_DIM",
-        values=[5,10,15]
+        values=[5,10] #[5,10,15]
     ),
     DiscreteParameter(
         parameter_name="HIDDEN_LAYERS",
-        values=[1,2,3]
+        values=[1,2] #[1,2,3]
     ),
     DiscreteParameter(
         parameter_name="BATCH_SIZE",
-        values=[8,16,32]
+        values=[8] #[8,16,32]
     ),
     DiscreteParameter(
         parameter_name="T",
-        values=[72,168,336]
+        values=[72] #[72,168,336]
     ),
     DiscreteParameter(
         parameter_name="LEARNING_RATE",
-        values=[0.01, 0.001, 0.0001]
+        values=[0.01] #[0.01, 0.001, 0.0001]
     ),
      DiscreteParameter(
         parameter_name="ALPHA",
-        values=[0.1,0.001,0]
+        values=[0.1] #[0.1,0.001,0]
     )
 ]
 
