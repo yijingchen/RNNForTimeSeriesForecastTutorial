@@ -27,7 +27,7 @@ wget https://www.dropbox.com/s/pqenrr2mcvl0hk9/GEFCom2014.zip
 ```bash
 ./setup_batchai -s <subscription_id> -r <azure-region> -g <resource-group>
 ```
-where 
-    - \<resource-group\> is the name of Azure resource group where all resources will be created. If the resource group does not exist then it will be created by the script. We recommend to use a dedicated resource group for this experiment.
+where     
+    - \<resource-group\> is the name of Azure resource group where all resources will be created. If the resource group does not exist then it will be created by the script. We recommend to use a dedicated resource group for this experiment.    
     - \<azure-region\> is Azure region where all resources will be created, one of "eastus", "eastus2", "southcentralus", "westcentralus", "westus2".
 
