@@ -34,27 +34,27 @@ cluster = batchai_client.clusters.get(cfg['resource_group'], cfg['batch_ai']['wo
 param_specs = [
     DiscreteParameter(
         parameter_name="LATENT_DIM",
-        values=[5,10] #[5,10,15]
+        values=[5,10,15]
     ),
     DiscreteParameter(
         parameter_name="HIDDEN_LAYERS",
-        values=[1,2] #[1,2,3]
+        values=[1,2,3]
     ),
     DiscreteParameter(
         parameter_name="BATCH_SIZE",
-        values=[8] #[8,16,32]
+        values=[8,16,32]
     ),
     DiscreteParameter(
         parameter_name="T",
-        values=[72] #[72,168,336]
+        values=[72,168,336]
     ),
     DiscreteParameter(
         parameter_name="LEARNING_RATE",
-        values=[0.01] #[0.01, 0.001, 0.0001]
+        values=[0.01, 0.001, 0.0001]
     ),
      DiscreteParameter(
         parameter_name="ALPHA",
-        values=[0.1] #[0.1,0.001,0]
+        values=[0.1,0.001,0]
     )
 ]
 
