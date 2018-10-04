@@ -8,7 +8,7 @@ from sklearn.preprocessing import MinMaxScaler
 from argparse import ArgumentParser
 from keras import regularizers
 from keras.models import Model, Sequential
-from keras.layers import GRU, Dense, CuDNNGRU
+from keras.layers import Dense, CuDNNGRU
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.optimizers import RMSprop
 
@@ -23,7 +23,7 @@ test_start_dt = '2014-11-01 00:00:00'
 # fixed parameters
 EPOCHS = 10           # max number of epochs when training FNN
 HORIZON = 24          # forecasting horizon (in hours)
-N_EXPERIMENTS = 2     # number of experiments for each combination of hyperparameter values
+N_EXPERIMENTS = 5     # number of experiments for each combination of hyperparameter values
 
 # create training, validation and test sets given the length of the history
 def create_input(energy, T):
@@ -56,10 +56,10 @@ def create_input(energy, T):
 def get_model(LEARNING_RATE, T, ALPHA, LATENT_DIM_1, LATENT_DIM_2):
     model = Sequential()
     if LATENT_DIM_2:
-        model.add(GRU(LATENT_DIM_1, input_shape=(T, 2), return_sequences=True, kernel_regularizer=regularizers.l2(ALPHA), bias_regularizer=regularizers.l2(ALPHA)))
-        model.add(GRU(LATENT_DIM_2, kernel_regularizer=regularizers.l2(ALPHA), bias_regularizer=regularizers.l2(ALPHA)))
+        model.add(CuDNNGRU(LATENT_DIM_1, input_shape=(T, 2), return_sequences=True, kernel_regularizer=regularizers.l2(ALPHA), bias_regularizer=regularizers.l2(ALPHA)))
+        model.add(CuDNNGRU(LATENT_DIM_2, kernel_regularizer=regularizers.l2(ALPHA), bias_regularizer=regularizers.l2(ALPHA)))
     else:
-        model.add(GRU(LATENT_DIM_1, input_shape=(T, 2), kernel_regularizer=regularizers.l2(ALPHA), bias_regularizer=regularizers.l2(ALPHA)))
+        model.add(CuDNNGRU(LATENT_DIM_1, input_shape=(T, 2), kernel_regularizer=regularizers.l2(ALPHA), bias_regularizer=regularizers.l2(ALPHA)))
 
     model.add(Dense(HORIZON, kernel_regularizer=regularizers.l2(ALPHA), bias_regularizer=regularizers.l2(ALPHA)))
     

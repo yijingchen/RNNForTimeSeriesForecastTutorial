@@ -119,9 +119,9 @@ test_mape_extractor = utils.job.MetricExtractor(output_dir_id='ALL', logfile='ou
                                                 regex='Mean test MAPE = (.*?) ')
 test_se_extractor = utils.job.MetricExtractor(output_dir_id='ALL', logfile='output.txt',
                                               regex='Mean test MAPE = ...... \+\/\- (.*)')
-T_extractor = utils.job.MetricExtractor(output_dir_id='ALL', logfile='output.txt', regex='T=(.*), LA')
+T_extractor = utils.job.MetricExtractor(output_dir_id='ALL', logfile='output.txt', regex='T=(.*), LATENT_DIM_1')
 latent_dim_1_extractor = utils.job.MetricExtractor(output_dir_id='ALL', logfile='output.txt', 
-                                                   regex='LATENT_DIM_1=(.*), LA')
+                                                   regex='LATENT_DIM_1=(.*), LATENT_DIM_2')
 latent_dim_2_extractor = utils.job.MetricExtractor(output_dir_id='ALL', logfile='output.txt', 
                                                    regex='LATENT_DIM_2=(.*), BA')
 batch_size_extractor = utils.job.MetricExtractor(output_dir_id='ALL', logfile='output.txt', 

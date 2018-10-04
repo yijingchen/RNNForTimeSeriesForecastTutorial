@@ -48,13 +48,14 @@ class TimeSeriesTensor(UserDict):
 
     The class takes the following parameters:
        - **dataset**: original time series
+       - **target** name of the target column
        - **H**: the forecast horizon
        - **tensor_structures**: a dictionary discribing the tensor structure of the form
              { 'tensor_name' : (range(max_backward_shift, max_forward_shift), [feature, feature, ...] ) }
              if features are non-sequential and should not be shifted, use the form
              { 'tensor_name' : (None, [feature, feature, ...])}
-       - **freq**: time series frequency
-       - **drop_incomplete**: (Boolean) whether to drop incomplete samples
+       - **freq**: time series frequency (default 'H' - hourly)
+       - **drop_incomplete**: (Boolean) whether to drop incomplete samples (default True)
     """
     
     def __init__(self, dataset, target, H, tensor_structure, freq='H', drop_incomplete=True):
