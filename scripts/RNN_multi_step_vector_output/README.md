@@ -4,7 +4,7 @@ The hyperparameters of feed-forward neural network are tuned using Batch AI. To 
 * follow instructions in [setup.md](./setup.md) and provision Batch AI environment and related Azure services
 * run
 ```bash
-nohup python tune_FF_multi_step_multivariate.py >& out.txt &
+nohup python tune_RNN_multi_step_vector_output.py >& out.txt &
 ```
 
 The running time depends on the size of your Batch AI cluster. With the default Batch AI quota (20 cores per account), the experiment finishes 

@@ -72,7 +72,7 @@ jcp = models.JobCreateParameters(
         )
     ],
     custom_toolkit_settings=models.CustomToolkitSettings(
-        command_line='python $AZ_BATCHAI_JOB_MOUNT_ROOT/resources/scripts/FF_multi_step_multivariate.py \
+        command_line='python $AZ_BATCHAI_JOB_MOUNT_ROOT/resources/scripts/RNN_multi_step_vector_output.py \
         --scriptdir $AZ_BATCHAI_JOB_MOUNT_ROOT/resources/scripts \
         --datadir $AZ_BATCHAI_JOB_MOUNT_ROOT/resources/data \
         --outdir $AZ_BATCHAI_OUTPUT_ALL \

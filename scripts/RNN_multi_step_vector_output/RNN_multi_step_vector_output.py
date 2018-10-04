@@ -21,7 +21,7 @@ valid_start_dt = '2014-09-01 00:00:00'
 test_start_dt = '2014-11-01 00:00:00'
 
 # fixed parameters
-EPOCHS = 100           # max number of epochs when training FNN
+EPOCHS = 10           # max number of epochs when training FNN
 HORIZON = 24          # forecasting horizon (in hours)
 N_EXPERIMENTS = 2     # number of experiments for each combination of hyperparameter values
 
@@ -56,10 +56,10 @@ def create_input(energy, T):
 def get_model(LEARNING_RATE, T, ALPHA, LATENT_DIM_1, LATENT_DIM_2):
     model = Sequential()
     if LATENT_DIM_2:
-        model.add(CuDNNGRU(LATENT_DIM_1, input_shape=(T, 2), return_sequences=True, kernel_regularizer=regularizers.l2(ALPHA), bias_regularizer=regularizers.l2(ALPHA)))
-        model.add(CuDNNGRU(LATENT_DIM_2, kernel_regularizer=regularizers.l2(ALPHA), bias_regularizer=regularizers.l2(ALPHA)))
+        model.add(GRU(LATENT_DIM_1, input_shape=(T, 2), return_sequences=True, kernel_regularizer=regularizers.l2(ALPHA), bias_regularizer=regularizers.l2(ALPHA)))
+        model.add(GRU(LATENT_DIM_2, kernel_regularizer=regularizers.l2(ALPHA), bias_regularizer=regularizers.l2(ALPHA)))
     else:
-        model.add(CuDNNGRU(LATENT_DIM_1, input_shape=(T, 2), kernel_regularizer=regularizers.l2(ALPHA), bias_regularizer=regularizers.l2(ALPHA)))
+        model.add(GRU(LATENT_DIM_1, input_shape=(T, 2), kernel_regularizer=regularizers.l2(ALPHA), bias_regularizer=regularizers.l2(ALPHA)))
 
     model.add(Dense(HORIZON, kernel_regularizer=regularizers.l2(ALPHA), bias_regularizer=regularizers.l2(ALPHA)))
     
