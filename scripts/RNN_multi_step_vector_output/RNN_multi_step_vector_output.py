@@ -21,9 +21,9 @@ valid_start_dt = '2014-09-01 00:00:00'
 test_start_dt = '2014-11-01 00:00:00'
 
 # fixed parameters
-EPOCHS = 10           # max number of epochs when training FNN
+EPOCHS = 100          # max number of epochs when training FNN
 HORIZON = 24          # forecasting horizon (in hours)
-N_EXPERIMENTS = 5     # number of experiments for each combination of hyperparameter values
+N_EXPERIMENTS = 1     # number of experiments for each combination of hyperparameter values
 
 # create training, validation and test sets given the length of the history
 def create_input(energy, T):
@@ -89,7 +89,7 @@ def run(energy, T_val, LATENT_DIM_1, LATENT_DIM_2, BATCH_SIZE, LEARNING_RATE, AL
                             epochs=EPOCHS,
                             validation_data=(valid_inputs['X'], valid_inputs['target']),
                             callbacks=[earlystop, best_val],
-                            verbose=1)
+                            verbose=0)
 
         # load the model with the smallest validation MAPE
         best_epoch = np.argmin(np.array(history.history['val_loss']))+1
