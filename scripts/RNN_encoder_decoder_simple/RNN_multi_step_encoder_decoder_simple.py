@@ -8,7 +8,7 @@ from sklearn.preprocessing import MinMaxScaler
 from argparse import ArgumentParser
 from keras import regularizers
 from keras.models import Model, Sequential
-from keras.layers import Dense, CuDNNGRU
+from keras.layers import Dense, CuDNNGRU, RepeatVector, Flatten, TimeDistributed
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.optimizers import RMSprop
 

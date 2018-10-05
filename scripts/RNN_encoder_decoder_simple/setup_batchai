@@ -48,7 +48,7 @@ az storage file upload -s resources --source ../../common/extract_data.py --path
 az storage file upload -s resources --source ../../common/utils.py --path scripts/common --account-name ${BATCHAI_SA}
 
 echo "Uploading training code..."
-az storage file upload -s resources --source RNN_multi_step_vector_output.py --path scripts --account-name ${BATCHAI_SA}
+az storage file upload -s resources --source RNN_multi_step_encoder_decoder_simple.py --path scripts --account-name ${BATCHAI_SA}
 
 echo "Creating Batch AI workspace..."
 az batchai workspace create -l ${REGION} -g ${BATCHAI_RG} -n ${BATCHAI_WS}
