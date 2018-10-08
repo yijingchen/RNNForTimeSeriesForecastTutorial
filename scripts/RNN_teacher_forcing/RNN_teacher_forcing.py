@@ -106,7 +106,8 @@ def predict_single_sequence(encoder_model, decoder_model, single_input_seq, hori
         # store prediction
         output.append(yhat[0,0,:])
         # update state
-        state = [h]
+        #state = [h]
+        states_value = h
         # update decoder input to be used as input for next prediction
         dec_input[0, 0, 0] = yhat
         
